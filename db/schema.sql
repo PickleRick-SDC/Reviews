@@ -32,6 +32,7 @@ CREATE TABLE characteristic_reviews (
   value INT
 );
 
+
 COPY reviews(id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '/Users/toandao/Desktop/reviews.csv' DELIMITER ',' CSV HEADER;
 COPY photos(id, review_id, url) FROM '/Users/toandao/Desktop/reviews_photos.csv' DELIMITER ',' CSV HEADER;
 COPY characteristics(id, product_id, name) FROM '/Users/toandao/Desktop/characteristics.csv' DELIMITER ',' CSV HEADER;
