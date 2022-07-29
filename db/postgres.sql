@@ -37,3 +37,5 @@ COPY reviews(id, product_id, rating, date, summary, body, recommend, reported, r
 COPY photos(id, review_id, url) FROM '/Users/toandao/Desktop/reviews_photos.csv' DELIMITER ',' CSV HEADER;
 COPY characteristics(id, product_id, name) FROM '/Users/toandao/Desktop/characteristics.csv' DELIMITER ',' CSV HEADER;
 COPY characteristic_reviews(id, characteristics_id, review_id, value) FROM '/Users/toandao/Desktop/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
+
+ALTER TABLE reviews ALTER COLUMN date TYPE timestamp USING (to_timestamp(date::decimal/1000) AT TIME ZONE 'UTC');
