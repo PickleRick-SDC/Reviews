@@ -2,8 +2,9 @@
   "name": "reviews",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
+    "server-dev": "npx nodemon --watch server server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,16 @@
   "bugs": {
     "url": "https://github.com/PickleRick-SDC/Reviews/issues"
   },
-  "homepage": "https://github.com/PickleRick-SDC/Reviews#readme"
+  "homepage": "https://github.com/PickleRick-SDC/Reviews#readme",
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "eslint-plugin-react": "^7.30.1",
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19",
+    "pg": "^8.7.3"
+  }
 }
