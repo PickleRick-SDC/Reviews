@@ -38,4 +38,9 @@ COPY photos(id, review_id, url) FROM '/Users/toandao/Desktop/reviews_photos.csv'
 COPY characteristics(id, product_id, name) FROM '/Users/toandao/Desktop/characteristics.csv' DELIMITER ',' CSV HEADER;
 COPY characteristic_reviews(id, characteristics_id, review_id, value) FROM '/Users/toandao/Desktop/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
 
+/* change data in date column to match api */
 ALTER TABLE reviews ALTER COLUMN date TYPE timestamp USING (to_timestamp(date::decimal/1000) AT TIME ZONE 'UTC');
+
+/* create indexes */
+CREATE INDEX idx_reviews_product_id ON reviews(product_id);
+CREATE INDEX idx_photos_review_id ON photos(review_id);

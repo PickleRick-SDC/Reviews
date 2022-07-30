@@ -1,10 +1,10 @@
 const router = require('express').Router();
-const controller = require('./controller.js');
+const {getReviews} = require('./controller.js');
 
-router.get('/', controller.getReviews);
-router.get('/meta', controller.getReviewMeta);
-router.post('/', controller.postReview);
-router.put(':/review_id/helpful', controller.markReviewHelpful);
-router.put(':/review_id/report', controller.reportReview);
+router.get('/', getReviews);
+// router.get('/meta', controller.getReviewMeta);
+// router.post('/', controller.postReview);
+// router.put(':/review_id/helpful', controller.markReviewHelpful);
+// router.put(':/review_id/report', controller.reportReview);
 
 module.exports = router;
