@@ -45,17 +45,28 @@ const getReviewMeta = (product_id) => {
   // get recommended -> reviews table
   // get characteristics -> reviews table, chars table, char_reviews table
 
-  let queryString = `SELECT json_build_object('1', COUNT(*) FILTER (WHERE reviews.rating = 1),
-                                              '2', COUNT(1) FILTER (WHERE reviews.rating = 2),
-                                              '3', COUNT(1) FILTER (WHERE reviews.rating = 3),
-                                              '4', COUNT(1) FILTER (WHERE reviews.rating = 4),
-                                              '5', COUNT(1) FILTER (WHERE reviews.rating = 5)
+  let queryString = `SELECT json_build_object('1', COUNT(*) FILTER (WHERE reviews.rating = 1)::VARCHAR,
+                                              '2', COUNT(1) FILTER (WHERE reviews.rating = 2)::VARCHAR,
+                                              '3', COUNT(1) FILTER (WHERE reviews.rating = 3)::VARCHAR,
+                                              '4', COUNT(1) FILTER (WHERE reviews.rating = 4)::VARCHAR,
+                                              '5', COUNT(1) FILTER (WHERE reviews.rating = 5)::VARCHAR
                                               ) AS ratings,
-                     json_build_object('false', COUNT(*) FILTER (WHERE reviews.recommend = false),
-                                       'true', COUNT(*) FILTER (WHERE reviews.recommend = true)
+                     json_build_object('false', COUNT(*) FILTER (WHERE reviews.recommend = false)::VARCHAR,
+                                       'true', COUNT(*) FILTER (WHERE reviews.recommend = true)::VARCHAR
                                        ) AS recommend,
-
-                     FROM reviews WHERE reviews.product_id = ${product_id}`;
+                     (WITH review_chars AS (
+                                            SELECT characteristics.name,
+                                                    characteristics.id,
+                                                    AVG(characteristic_reviews.value)
+                                            FROM characteristics RIGHT JOIN characteristic_reviews
+                                            ON characteristics.id = characteristic_reviews.characteristics_id
+                                            WHERE characteristics.product_id = ${product_id}
+                                            GROUP BY characteristics.id
+                                            ORDER BY characteristics.id
+                                            )
+                                            SELECT json_object_agg(name, json_build_object('id', id, 'value', avg::VARCHAR))
+                      FROM review_chars) AS characteristics
+                      FROM reviews WHERE reviews.product_id = ${product_id}`;
 
   return pool.query(queryString);
 }
@@ -63,3 +74,4 @@ const getReviewMeta = (product_id) => {
 module.exports.getReviews = getReviews;
 module.exports.getReviewMeta = getReviewMeta;
 
+//json_build_object('characteristics', (SELECT json_agg(characteristics.name) FROM characteristics WHERE characteristics.product_id = ${product_id}))
