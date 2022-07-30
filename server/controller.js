@@ -5,7 +5,8 @@ const getReviews = (req, res) => {
   let count = req.query.count || 5;
   let page = (req.query.page - 1) || 0;
   let product_id = req.query.product_id;
-  models.getReviews(product_id, count, page)
+  let sort = req.query.sort;
+  models.getReviews(product_id, count, page, sort)
   .then((response) => {
     console.log('response: ', response.rows)
     res.send(response.rows);
