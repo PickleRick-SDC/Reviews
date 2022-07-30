@@ -44,3 +44,6 @@ ALTER TABLE reviews ALTER COLUMN date TYPE timestamp USING (to_timestamp(date::d
 /* create indexes */
 CREATE INDEX idx_reviews_product_id ON reviews(product_id);
 CREATE INDEX idx_photos_review_id ON photos(review_id);
+CREATE INDEX idx_chars_product_id ON characteristics(product_id);
+CREATE INDEX idx_char_reviews_chars_id ON characteristic_reviews(characteristics_id);
+CREATE INDEX idx_char_reviews_review_id ON characteristic_reviews(review_id);

@@ -16,4 +16,18 @@ const getReviews = (req, res) => {
   })
 }
 
+const getReviewMeta = (req, res) => {
+  console.log('request.query: ', req.query);
+  product_id = req.query.product_id;
+  models.getReviewMeta(product_id)
+  .then((response) => {
+    console.log('response: ', response.rows)
+    res.send(response.rows[0]);
+  })
+  .catch((err) => {
+    console.log('error getting metadata: ', err)
+  })
+}
+
 module.exports.getReviews = getReviews;
+module.exports.getReviewMeta = getReviewMeta;
