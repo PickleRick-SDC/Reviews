@@ -45,7 +45,7 @@ const getReviewMeta = (product_id) => {
   // get recommended -> reviews table
   // get characteristics -> reviews table, chars table, char_reviews table
 
-  let queryString = `SELECT json_build_object('1', COUNT(*) FILTER (WHERE reviews.rating = 1)::VARCHAR,
+  let queryString = `SELECT json_build_object('1', COUNT(1) FILTER (WHERE reviews.rating = 1)::VARCHAR,
                                               '2', COUNT(1) FILTER (WHERE reviews.rating = 2)::VARCHAR,
                                               '3', COUNT(1) FILTER (WHERE reviews.rating = 3)::VARCHAR,
                                               '4', COUNT(1) FILTER (WHERE reviews.rating = 4)::VARCHAR,
