@@ -1,6 +1,6 @@
 const pool = require('../db/index.js');
 
-console.log(pool.query);
+// console.log(pool.query);
 
 const getReviews = (product_id, count, page, sort) => {
   // limit equals count
@@ -71,7 +71,25 @@ const getReviewMeta = (product_id) => {
   return pool.query(queryString);
 }
 
+const markReviewHelpful = (review_id) => {
+  let queryString = `UPDATE reviews
+                     SET helpfulness = helpfulness + 1
+                     WHERE reviews.id = ${review_id}`;
+
+  return pool.query(queryString);
+}
+
+const reportReview = (review_id) => {
+  let queryString = `UPDATE reviews
+                     SET reported = true
+                     WHERE reviews.id = ${review_id}`
+
+  return pool.query(queryString);
+}
+
 module.exports.getReviews = getReviews;
 module.exports.getReviewMeta = getReviewMeta;
+module.exports.markReviewHelpful = markReviewHelpful;
+module.exports.reportReview = reportReview;
 
 //json_build_object('characteristics', (SELECT json_agg(characteristics.name) FROM characteristics WHERE characteristics.product_id = ${product_id}))
