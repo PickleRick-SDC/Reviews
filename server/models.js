@@ -88,7 +88,16 @@ const reportReview = (review_id) => {
 }
 
 const postReview = (product_id, rating, summary, body, recommend, name, email, photos, characteristics) => {
-  let queryString = `WITH insert_review AS
+  let char_keys = [];
+  let char_values = [];
+
+  for (var keys in characteristics) {
+    char_keys.push(keys);
+    char_values.push(characteristics[keys]);
+  }
+
+  if (photos.length > 0) {
+    let queryString = `WITH insert_review AS
                       (
                       INSERT INTO reviews (
                                           product_id,
@@ -109,9 +118,50 @@ const postReview = (product_id, rating, summary, body, recommend, name, email, p
                               ${email}
                               )
                       RETURNING id as review_id
-                      )
+                      ), char_keys_values AS
+                         (
+                           INSERT INTO characteristic_reviews (
+                                                               review_id,
+                                                               characteristic_id,
+                                                               value
+                                                              )
+                           SELECT (review_id FROM insert_review), UNNEST(ARRAY(${char_keys})), UNNEST(ARRAY(${char_values}))
+                         )
                       INSERT INTO photos (review_id, url)
-                      SELECT review_id, UNNEST(ARRAY(${photos})) FROM insert_review`
+                      SELECT review_id, UNNEST(ARRAY(${photos})) FROM insert_review
+                      `
+  } else {
+      let queryString = `WITH insert_review AS
+                        (
+                        INSERT INTO reviews (
+                                            product_id,
+                                            rating,
+                                            summary,
+                                            body,
+                                            recommend,
+                                            reviewer_name,
+                                            reviewer_email
+                                            )
+                        VALUES (
+                                ${product_id},
+                                ${rating},
+                                ${summary},
+                                ${body},
+                                ${recommend},
+                                ${name},
+                                ${email}
+                                )
+                        RETURNING id as review_id
+                        )
+                        INSERT INTO characteristic_reviews (
+                                                            review_id,
+                                                            characteristic_id,
+                                                            value
+                                                            )
+                        SELECT (review_id FROM insert_review), UNNEST(ARRAY(${char_keys})), UNNEST(ARRAY(${char_values}))
+                        `
+  }
+  return pool.query(queryString);
 }
 
 // select now()::timestamp(3);
@@ -120,6 +170,7 @@ module.exports.getReviews = getReviews;
 module.exports.getReviewMeta = getReviewMeta;
 module.exports.markReviewHelpful = markReviewHelpful;
 module.exports.reportReview = reportReview;
+module.exports.postReview = postReview;
 
 //json_build_object('characteristics', (SELECT json_agg(characteristics.name) FROM characteristics WHERE characteristics.product_id = ${product_id}))
 

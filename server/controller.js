@@ -53,8 +53,21 @@ const reportReview = (req, res) => {
   })
 }
 
+const postReview = (req, res) => {
+  const {product_id, rating, summary, body, recommend, name, email, photos, characteristics} = req.body;
+  console.log('req.body: ', req.body);
+  models.postReview(product_id, rating, summary, body, recommend, name, email, photos, characteristics)
+  .then(() => {
+    res.status(201).send('Post Made');
+  })
+  .catch((err) => {
+    console.log('error making post: ', err);
+  })
+}
+
 
 module.exports.getReviews = getReviews;
 module.exports.getReviewMeta = getReviewMeta;
 module.exports.markReviewHelpful = markReviewHelpful;
 module.exports.reportReview = reportReview;
+module.exports.postReview = postReview;
