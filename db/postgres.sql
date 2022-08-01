@@ -40,6 +40,13 @@ COPY characteristic_reviews(id, characteristics_id, review_id, value) FROM '/Use
 
 /* change data in date column to match api */
 ALTER TABLE reviews ALTER COLUMN date TYPE timestamp USING (to_timestamp(date::decimal/1000) AT TIME ZONE 'UTC');
+ALTER TABLE reviews ALTER date SET DEFAULT now()::timestamp(3);
+
+ALTER TABLE reviews ALTER COLUMN reported SET DEFAULT false;
+ALTER TABLE reviews ALTER COLUMN response SET DEFAULT null;
+ALTER TABLE reviews ALTER COLUMN helpfulness SET DEFAULT 0;
+
+
 
 /* create indexes */
 CREATE INDEX idx_reviews_product_id ON reviews(product_id);

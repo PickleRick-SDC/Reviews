@@ -87,6 +87,32 @@ const reportReview = (review_id) => {
   return pool.query(queryString);
 }
 
+const postReview = (product_id, rating, summary, body, recommend, name, email, photos, characteristics) => {
+  let queryString = `WITH insert_review AS
+                      (
+                      INSERT INTO reviews (
+                                          product_id,
+                                          rating,
+                                          summary,
+                                          body,
+                                          recommend,
+                                          reviewer_name,
+                                          reviewer_email
+                                          )
+                      VALUES (
+                              ${product_id},
+                              ${rating},
+                              ${summary},
+                              ${body},
+                              ${recommend},
+                              ${name},
+                              ${email}
+                              )
+                      RETURNING id as review_id
+                      )
+                      INSERT INTO photos (review_id, url)
+                      SELECT review_id, UNNEST(ARRAY(${photos})) FROM insert_review`
+}
 
 // select now()::timestamp(3);
 
@@ -96,3 +122,8 @@ module.exports.markReviewHelpful = markReviewHelpful;
 module.exports.reportReview = reportReview;
 
 //json_build_object('characteristics', (SELECT json_agg(characteristics.name) FROM characteristics WHERE characteristics.product_id = ${product_id}))
+
+// INSERT INTO temp_photos(url) SELECT UNNEST(ARRAY['yo', 'yo', 'yo']);
+// INSERT INTO temp_photos(review_id, url) SELECT 1, UNNEST(ARRAY['yo', 'yo', 'yo'])
+// insert into temp_photos(review_id) values (2) RETURNING id
+// WITH ins1 AS (INSERT INTO test(date) values(now()) RETURNING id AS review_id) INSERT INTO temp_photos (review_id, url) select review_id, UNNEST(ARRAY['please', 'work', 'pls']) from ins1;
