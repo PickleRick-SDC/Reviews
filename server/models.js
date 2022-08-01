@@ -87,6 +87,9 @@ const reportReview = (review_id) => {
   return pool.query(queryString);
 }
 
+
+// select now()::timestamp(3);
+
 module.exports.getReviews = getReviews;
 module.exports.getReviewMeta = getReviewMeta;
 module.exports.markReviewHelpful = markReviewHelpful;
