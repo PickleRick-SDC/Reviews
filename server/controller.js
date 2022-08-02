@@ -1,14 +1,14 @@
 const models = require('./models.js');
 
 const getReviews = (req, res) => {
-  console.log('request.query: ', req.query);
+  // console.log('request.query: ', req.query);
   let count = req.query.count || 5;
   let page = (req.query.page - 1) || 0;
   let product_id = req.query.product_id;
   let sort = req.query.sort || 'relevant';
   models.getReviews(product_id, count, page, sort)
   .then((response) => {
-    console.log('response: ', response.rows)
+    // console.log('response: ', response.rows)
     res.status(200).send({
       'product': product_id,
       'page': page,
@@ -22,11 +22,11 @@ const getReviews = (req, res) => {
 }
 
 const getReviewMeta = (req, res) => {
-  console.log('request.query: ', req.query);
+  // console.log('request.query: ', req.query);
   let product_id = req.query.product_id;
   models.getReviewMeta(product_id)
   .then((response) => {
-    console.log('response: ', response.rows)
+    // console.log('response: ', response.rows)
     res.status(200).send(response.rows[0]);
   })
   .catch((err) => {

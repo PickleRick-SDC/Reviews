@@ -162,7 +162,7 @@ const postReview = ({ product_id, rating, summary, body, recommend, name, email,
                         SELECT (review_id FROM insert_review), UNNEST(ARRAY${char_keys}), UNNEST(ARRAY${char_values})
                         `
   }
-  console.log('query string: ', queryString)
+  // console.log('query string: ', queryString)
   return pool.query(queryString);
 }
 
