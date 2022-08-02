@@ -87,9 +87,10 @@ const reportReview = (review_id) => {
   return pool.query(queryString);
 }
 
-const postReview = (product_id, rating, summary, body, recommend, name, email, photos, characteristics) => {
+const postReview = ({ product_id, rating, summary, body, recommend, name, email, photos, characteristics }) => {
   let char_keys = [];
   let char_values = [];
+  let queryString;
 
   for (var keys in characteristics) {
     char_keys.push(keys);
@@ -97,7 +98,7 @@ const postReview = (product_id, rating, summary, body, recommend, name, email, p
   }
 
   if (photos.length > 0) {
-    let queryString = `WITH insert_review AS
+    queryString = `WITH insert_review AS
                       (
                       INSERT INTO reviews (
                                           product_id,
@@ -111,27 +112,27 @@ const postReview = (product_id, rating, summary, body, recommend, name, email, p
                       VALUES (
                               ${product_id},
                               ${rating},
-                              ${summary},
-                              ${body},
+                              '${summary}',
+                              '${body}',
                               ${recommend},
-                              ${name},
-                              ${email}
+                              '${name}',
+                              '${email}'
                               )
                       RETURNING id as review_id
                       ), char_keys_values AS
                          (
                            INSERT INTO characteristic_reviews (
                                                                review_id,
-                                                               characteristic_id,
+                                                               characteristics_id,
                                                                value
                                                               )
-                           SELECT (review_id FROM insert_review), UNNEST(ARRAY(${char_keys})), UNNEST(ARRAY(${char_values}))
+                           SELECT review_id, UNNEST(ARRAY[${char_keys}])::INT, UNNEST(ARRAY[${char_values}])::INT FROM insert_review
                          )
                       INSERT INTO photos (review_id, url)
-                      SELECT review_id, UNNEST(ARRAY(${photos})) FROM insert_review
+                      SELECT review_id, UNNEST(ARRAY['${photos}']::VARCHAR[]) FROM insert_review
                       `
   } else {
-      let queryString = `WITH insert_review AS
+      queryString = `WITH insert_review AS
                         (
                         INSERT INTO reviews (
                                             product_id,
@@ -146,10 +147,10 @@ const postReview = (product_id, rating, summary, body, recommend, name, email, p
                                 ${product_id},
                                 ${rating},
                                 ${summary},
-                                ${body},
+                                ${body}::VARCHAR,
                                 ${recommend},
-                                ${name},
-                                ${email}
+                                ${name}::VARCHAR,
+                                ${email}::VARCHAR
                                 )
                         RETURNING id as review_id
                         )
@@ -158,9 +159,10 @@ const postReview = (product_id, rating, summary, body, recommend, name, email, p
                                                             characteristic_id,
                                                             value
                                                             )
-                        SELECT (review_id FROM insert_review), UNNEST(ARRAY(${char_keys})), UNNEST(ARRAY(${char_values}))
+                        SELECT (review_id FROM insert_review), UNNEST(ARRAY${char_keys}), UNNEST(ARRAY${char_values})
                         `
   }
+  console.log('query string: ', queryString)
   return pool.query(queryString);
 }
 
@@ -178,3 +180,37 @@ module.exports.postReview = postReview;
 // INSERT INTO temp_photos(review_id, url) SELECT 1, UNNEST(ARRAY['yo', 'yo', 'yo'])
 // insert into temp_photos(review_id) values (2) RETURNING id
 // WITH ins1 AS (INSERT INTO test(date) values(now()) RETURNING id AS review_id) INSERT INTO temp_photos (review_id, url) select review_id, UNNEST(ARRAY['please', 'work', 'pls']) from ins1;
+
+// WITH insert_review AS
+//                       (
+//                       INSERT INTO reviews (
+//                                           product_id,
+//                                           rating,
+//                                           summary,
+//                                           body,
+//                                           recommend,
+//                                           reviewer_name,
+//                                           reviewer_email
+//                                           )
+//                       VALUES (
+//                               1,
+//                               3,
+//                               'apple',
+//                               'orange',
+//                               true,
+//                               'banana',
+//                               'grape'
+//                               )
+//                       RETURNING id as review_id
+//                       ), char_keys_values AS
+//                          (
+//                            INSERT INTO characteristic_reviews (
+//                                                                review_id,
+//                                                                characteristics_id,
+//                                                                value
+//                                                               )
+//                            SELECT review_id, UNNEST(ARRAY['1', '2', '3', '4'])::INT, UNNEST(ARRAY['5', '4', '4', '5'])::INT FROM insert_review
+//                          )
+//                       INSERT INTO photos (review_id, url)
+//                       SELECT review_id, UNNEST(ARRAY['wefwf', 'wefwefwe']) FROM insert_review;
+

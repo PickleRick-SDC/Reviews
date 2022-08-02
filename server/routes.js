@@ -3,7 +3,7 @@ const { getReviews, getReviewMeta, markReviewHelpful, reportReview, postReview }
 
 router.get('/', getReviews);
 router.get('/meta', getReviewMeta);
-router.post('/', controller.postReview);
+router.post('/', postReview);
 router.put('/:review_id/helpful', markReviewHelpful);
 router.put('/:review_id/report', reportReview);
 

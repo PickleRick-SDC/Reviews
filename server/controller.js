@@ -54,9 +54,9 @@ const reportReview = (req, res) => {
 }
 
 const postReview = (req, res) => {
-  const {product_id, rating, summary, body, recommend, name, email, photos, characteristics} = req.body;
+  // const {product_id, rating, summary, body, recommend, name, email, photos, characteristics} = req.body;
   console.log('req.body: ', req.body);
-  models.postReview(product_id, rating, summary, body, recommend, name, email, photos, characteristics)
+  models.postReview(req.body)
   .then(() => {
     res.status(201).send('Post Made');
   })
