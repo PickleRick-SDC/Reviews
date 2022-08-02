@@ -9,7 +9,12 @@ const getReviews = (req, res) => {
   models.getReviews(product_id, count, page, sort)
   .then((response) => {
     console.log('response: ', response.rows)
-    res.status(200).send(response.rows);
+    res.status(200).send({
+      'product': product_id,
+      'page': page,
+      'count': count,
+      'results': response.rows
+    });
   })
   .catch((err) => {
     console.log('error getting reviews: ', err)
