@@ -180,37 +180,4 @@ module.exports.postReview = postReview;
 // INSERT INTO temp_photos(review_id, url) SELECT 1, UNNEST(ARRAY['yo', 'yo', 'yo'])
 // insert into temp_photos(review_id) values (2) RETURNING id
 // WITH ins1 AS (INSERT INTO test(date) values(now()) RETURNING id AS review_id) INSERT INTO temp_photos (review_id, url) select review_id, UNNEST(ARRAY['please', 'work', 'pls']) from ins1;
-
-// WITH insert_review AS
-//                       (
-//                       INSERT INTO reviews (
-//                                           product_id,
-//                                           rating,
-//                                           summary,
-//                                           body,
-//                                           recommend,
-//                                           reviewer_name,
-//                                           reviewer_email
-//                                           )
-//                       VALUES (
-//                               1,
-//                               3,
-//                               'apple',
-//                               'orange',
-//                               true,
-//                               'banana',
-//                               'grape'
-//                               )
-//                       RETURNING id as review_id
-//                       ), char_keys_values AS
-//                          (
-//                            INSERT INTO characteristic_reviews (
-//                                                                review_id,
-//                                                                characteristics_id,
-//                                                                value
-//                                                               )
-//                            SELECT review_id, UNNEST(ARRAY['1', '2', '3', '4'])::INT, UNNEST(ARRAY['5', '4', '4', '5'])::INT FROM insert_review
-//                          )
-//                       INSERT INTO photos (review_id, url)
-//                       SELECT review_id, UNNEST(ARRAY['wefwf', 'wefwefwe']) FROM insert_review;
-
+//  SELECT MAX(id) from characteristic_reviews;
