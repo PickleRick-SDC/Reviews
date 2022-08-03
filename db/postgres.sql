@@ -1,4 +1,7 @@
-CREATE TABLE reviews (
+DROP DATABASE IF EXISTS sdc;
+CREATE DATABASE sdc;
+
+CREATE TABLE IF NOT EXISTS reviews (
   id SERIAL NOT NULL PRIMARY KEY,
   product_id INT,
   rating INT,
@@ -13,19 +16,19 @@ CREATE TABLE reviews (
   helpfulness INT
 );
 
-CREATE TABLE photos (
+CREATE TABLE IF NOT EXISTS photos (
   id SERIAL NOT NULL PRIMARY KEY,
   review_id INT REFERENCES reviews(id),
   url VARCHAR(250)
 );
 
-CREATE TABLE characteristics (
+CREATE TABLE IF NOT EXISTS characteristics (
   id SERIAL NOT NULL PRIMARY KEY,
   product_id INT,
   name VARCHAR(10)
 );
 
-CREATE TABLE characteristic_reviews (
+CREATE TABLE IF NOT EXISTS characteristic_reviews (
   id SERIAL NOT NULL PRIMARY KEY,
   characteristics_id INT REFERENCES characteristics(id),
   review_id INT REFERENCES reviews(id),
@@ -33,10 +36,10 @@ CREATE TABLE characteristic_reviews (
 );
 
 
-COPY reviews(id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '/Users/toandao/Desktop/reviews.csv' DELIMITER ',' CSV HEADER;
-COPY photos(id, review_id, url) FROM '/Users/toandao/Desktop/reviews_photos.csv' DELIMITER ',' CSV HEADER;
-COPY characteristics(id, product_id, name) FROM '/Users/toandao/Desktop/characteristics.csv' DELIMITER ',' CSV HEADER;
-COPY characteristic_reviews(id, characteristics_id, review_id, value) FROM '/Users/toandao/Desktop/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
+COPY reviews(id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM './datasets/reviews.csv' DELIMITER ',' CSV HEADER;
+COPY photos(id, review_id, url) FROM './datasets/reviews_photos.csv' DELIMITER ',' CSV HEADER;
+COPY characteristics(id, product_id, name) FROM './datasets/characteristics.csv' DELIMITER ',' CSV HEADER;
+COPY characteristic_reviews(id, characteristics_id, review_id, value) FROM './datasets/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
 
 /* change data in date column to match api */
 ALTER TABLE reviews ALTER COLUMN date TYPE timestamp USING (to_timestamp(date::decimal/1000) AT TIME ZONE 'UTC');
@@ -53,4 +56,3 @@ CREATE INDEX idx_reviews_product_id ON reviews(product_id);
 CREATE INDEX idx_photos_review_id ON photos(review_id);
 CREATE INDEX idx_chars_product_id ON characteristics(product_id);
 CREATE INDEX idx_char_reviews_chars_id ON characteristic_reviews(characteristics_id);
-CREATE INDEX idx_char_reviews_review_id ON characteristic_reviews(review_id);
