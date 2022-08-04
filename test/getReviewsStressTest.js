@@ -17,13 +17,7 @@ export let options = {
 
 
 export default function () {
-  // const API_BASE_URL = 'http://localhost:3000';
   let randomId = randomIntBetween(900000, 950000);
-  // const responses = http.batch([
-  //   ['GET', `${API_BASE_URL}/reviews?product_id=900000`],
-  //   ['GET', `${API_BASE_URL}/reviews?product_id=900100`],
-  //   ['GET', `${API_BASE_URL}/reviews?product_id=900200`]
-  // ]);
   let res = http.get(`http://localhost:3000/reviews?product_id=${randomId}`);
   sleep(1);
 }

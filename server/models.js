@@ -1,10 +1,6 @@
 const pool = require('../db/index.js');
 
-// console.log(pool.query);
-
 const getReviews = (product_id, count, page, sort) => {
-  // limit equals count
-  // offset equals page*count
   let offset = count * page;
   if (sort === 'newest') {
     sort = 'reviews.date DESC';
@@ -30,20 +26,11 @@ const getReviews = (product_id, count, page, sort) => {
                       AND reviews.reported = false
                       GROUP BY reviews.id
                       order by ${sort} offset ${offset} limit ${count}`;
-  // pool.query(queryString, (err) => {
-  //   console.log('query string: ', queryString);
-  //   if(err) {
-  //     console.log(err);
-  //   }
-  // })
+
   return pool.query(queryString);
 }
 
 const getReviewMeta = (product_id) => {
-  // reviews table, characteristics table, characteristic_reviews table
-  // get ratings -> reviews table
-  // get recommended -> reviews table
-  // get characteristics -> reviews table, chars table, char_reviews table
 
   let queryString = `SELECT json_build_object('1', COUNT(1) FILTER (WHERE reviews.rating = 1)::VARCHAR,
                                               '2', COUNT(1) FILTER (WHERE reviews.rating = 2)::VARCHAR,
@@ -162,7 +149,6 @@ const postReview = ({ product_id, rating, summary, body, recommend, name, email,
                         SELECT (review_id FROM insert_review), UNNEST(ARRAY${char_keys}), UNNEST(ARRAY${char_values})
                         `
   }
-  // console.log('query string: ', queryString)
   return pool.query(queryString);
 }
 
@@ -174,10 +160,3 @@ module.exports.markReviewHelpful = markReviewHelpful;
 module.exports.reportReview = reportReview;
 module.exports.postReview = postReview;
 
-//json_build_object('characteristics', (SELECT json_agg(characteristics.name) FROM characteristics WHERE characteristics.product_id = ${product_id}))
-
-// INSERT INTO temp_photos(url) SELECT UNNEST(ARRAY['yo', 'yo', 'yo']);
-// INSERT INTO temp_photos(review_id, url) SELECT 1, UNNEST(ARRAY['yo', 'yo', 'yo'])
-// insert into temp_photos(review_id) values (2) RETURNING id
-// WITH ins1 AS (INSERT INTO test(date) values(now()) RETURNING id AS review_id) INSERT INTO temp_photos (review_id, url) select review_id, UNNEST(ARRAY['please', 'work', 'pls']) from ins1;
-//  SELECT MAX(id) from characteristic_reviews;
