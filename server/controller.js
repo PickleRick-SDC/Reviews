@@ -17,7 +17,8 @@ const getReviews = (req, res) => {
     });
   })
   .catch((err) => {
-    console.log('error getting reviews: ', err)
+    console.log('error getting reviews: ', err);
+    res.status(500).send(err);
   })
 }
 
@@ -30,7 +31,8 @@ const getReviewMeta = (req, res) => {
     res.status(200).send(response.rows[0]);
   })
   .catch((err) => {
-    console.log('error getting metadata: ', err)
+    console.log('error getting metadata: ', err);
+    res.status(500).send(err);
   })
 }
 
@@ -43,6 +45,7 @@ const markReviewHelpful = (req, res) => {
   })
   .catch((err) => {
     console.log('error marking review as helpful: ', err);
+    res.status(500).send(err);
   })
 }
 
@@ -55,6 +58,7 @@ const reportReview = (req, res) => {
   })
   .catch((err) => {
     console.log('error reporting review: ', err);
+    res.status(500).send(err);
   })
 }
 
@@ -67,6 +71,7 @@ const postReview = (req, res) => {
   })
   .catch((err) => {
     console.log('error making post: ', err);
+    res.status(500).send(err);
   })
 }
 
